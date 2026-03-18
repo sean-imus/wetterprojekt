@@ -15,8 +15,12 @@ if not zip_files:
     print(f"Keine zip Dateien gefunden in {zip_folder}, zuerst downloader.py ausführen")
     exit()
 
-for zip_file in zip_files:
+total = len(zip_files)
+print(f"Extracting {total} files:")
+
+for i, zip_file in enumerate(zip_files, 1):
+    print(f"Extracting {i}/{total}: {zip_file.name}")
     with zipfile.ZipFile(zip_file, 'r') as z:
         z.extractall(output_folder)
 
-print("Done!")
+print(f"Done! Extracted {total} files.")
