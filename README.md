@@ -16,4 +16,5 @@ Der Learninglessons Ordner enthält die Meilensteine die wir als Übung machen s
 # NOT DONE YET
 3. create_db.py um eine leere sqlite Datenbank mit dem korrekten Schema zu erstellen
 4. csv_to_sql.py um alle CSV Dateien aus den extrahierten Ordnern in die Datenbank zu laden 
-5. main.py um mit der Datenbank zu interagieren
+5. fix_values.py um die Einträge in der Datenbank die `-999` betragen mit NULL zu tauschen
+6. main.py um mit der Datenbank zu interagieren
