@@ -1,5 +1,4 @@
 import zipfile
-import re
 from pathlib import Path
 
 zip_folder = "Wetterdaten"
