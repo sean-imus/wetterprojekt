@@ -10,7 +10,10 @@ if Path(output_folder).exists():
 
 Path(output_folder).mkdir()
 
-zip_files = Path(zip_folder).glob("*.zip")
+zip_files = list(Path(zip_folder).glob("*.zip"))
+if not zip_files:
+    print(f"Keine zip Dateien gefunden in {zip_folder}, zuerst downloader.py ausführen")
+    exit()
 
 for zip_file in zip_files:
     with zipfile.ZipFile(zip_file, 'r') as z:
