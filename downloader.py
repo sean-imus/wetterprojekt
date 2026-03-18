@@ -16,6 +16,6 @@ files = re.findall(r'href="([^"]+\.(?:zip|txt))"', entire_page)
 
 for file in files:
     data = requests.get(url + file).content
-    open(DATA_DIR + "/" + file, "wb").write(data)
+    open(Path(DATA_DIR) / file, "wb").write(data)
 
 print(f"Downloaded {len(files)} files!")
