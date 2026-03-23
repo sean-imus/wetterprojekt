@@ -20,8 +20,8 @@ if not zip_files:
     exit()
 
 for i, zip_file in enumerate(zip_files, 1):
-    print(f"Extracting {i}/{total}: {zip_file.name}")
     with zipfile.ZipFile(zip_file, 'r') as z:
         z.extractall(output_folder)
+    print(f"{zip_file.name} extrahiert!")
 
-print(f"Done! Extracted {total} files.")
+print(f"{len(zip_files)} Dateien extrahiert!")
