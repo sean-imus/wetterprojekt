@@ -16,7 +16,7 @@ Path(output_folder).mkdir()
 
 zip_files = list(Path(zip_folder).glob("*.zip"))
 if not zip_files:
-    print(f"Keine zip Dateien gefunden in {zip_folder} Ordner, bitte zuerst downloader.py ausführen")
+    print(f"Keine .zip Dateien gefunden in {zip_folder} Ordner, bitte zuerst downloader.py ausführen")
     exit()
 
 for i, zip_file in enumerate(zip_files, 1):
