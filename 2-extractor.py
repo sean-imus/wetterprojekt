@@ -1,5 +1,7 @@
 import zipfile
 from pathlib import Path
+from concurrent.futures import ThreadPoolExecutor, as_completed
+import os
 
 zip_folder = "Wetterdaten"
 output_folder = "Extrahierte_Wetterdaten"
@@ -19,9 +21,16 @@ if not zip_files:
     print(f"Keine .zip Dateien gefunden in {zip_folder} Ordner, bitte zuerst downloader.py ausführen")
     exit()
 
-for zip_file in zip_files:
+def extract_zip(zip_file):
     with zipfile.ZipFile(zip_file, 'r') as z:
         z.extractall(output_folder)
-    print(f"{zip_file.name} extrahiert!")
+    return zip_file.name
+
+worker_count = os.cpu_count()
+with ThreadPoolExecutor(max_workers=worker_count) as executor:
+    futures = {executor.submit(extract_zip, z): z for z in zip_files}
+    for future in as_completed(futures):
+        name = future.result()
+        print(f"{name} extrahiert!")
 
 print(f"{len(zip_files)} Dateien extrahiert!")
