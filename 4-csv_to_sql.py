@@ -1,7 +1,5 @@
 import sqlite3
 from pathlib import Path
-from concurrent.futures import ThreadPoolExecutor, as_completed
-import os
 
 db_file = "wetter.db"
 data_folder = "Extrahierte_Wetterdaten"
@@ -23,10 +21,10 @@ if not csv_files:
     print(f"Keine CSV Dateien gefunden in {data_folder}, bitte zuerst extractor.py ausführen")
     exit()
 
-def parse_and_insert(csv_file):
-    conn = sqlite3.connect(db_file)
-    cursor = conn.cursor()
-    
+conn = sqlite3.connect(db_file)
+cursor = conn.cursor()
+
+for csv_file in csv_files:
     with open(csv_file, "r") as f:
         lines = f.readlines()
     
@@ -35,20 +33,10 @@ def parse_and_insert(csv_file):
     placeholders = ",".join(["?"] * len(header))
     insert_sql = f"INSERT INTO tbl_messwerte ({columns}) VALUES ({placeholders})"
     
-    batch_size = 5000
-    for i in range(1, len(lines), batch_size):
-        batch = [line.strip().split(";")[:-1] for line in lines[i:i+batch_size]]
-        cursor.executemany(insert_sql, batch)
-        conn.commit()
-    
-    conn.close()
-    return csv_file.name
+    rows = [line.strip().split(";")[:-1] for line in lines[1:]]
+    cursor.executemany(insert_sql, rows)
+    conn.commit()
+    print(f"{csv_file.name} importiert!")
 
-worker_count = os.cpu_count()
-with ThreadPoolExecutor(max_workers=worker_count) as executor:
-    futures = {executor.submit(parse_and_insert, csv): csv for csv in csv_files}
-    for future in as_completed(futures):
-        name = future.result()
-        print(f"{name} importiert!")
-
+conn.close()
 print(f"{len(csv_files)} .csv Dateien importiert!")
