@@ -1,20 +1,15 @@
 import sqlite3
 from pathlib import Path
 
-DB_NAME = "wetter.db"
+output_file = "wetter.db"
 
 def create_database():
-    db_path = Path(DB_NAME)
+    db_path = Path(output_file)
     if db_path.exists():
-        print("Datenbank existiert bereits. Wenn du fortfährst, werden alle Daten gelöscht!")
-        confirm = input("Trotzdem fortfahren? (j/n): ")
-        if confirm.lower() != 'j':
-            print("Abgebrochen.")
-            exit()
-        db_path.unlink()
-        print("Alte Datenbank gelöscht.")
-    
-    conn = sqlite3.connect(DB_NAME)
+        print(f"{output_file} Datei existiert bereits, um Datenbank erneut zu erstellen, bitte Datenbank löschen")
+        exit()
+
+    conn = sqlite3.connect(output_file)
     cursor = conn.cursor()
     
     cursor.execute("""
@@ -43,6 +38,6 @@ def create_database():
     
     conn.commit()
     conn.close()
-    print("Done!")
+    print(f"{output_file} Datei erstellt!")
 
 create_database()
