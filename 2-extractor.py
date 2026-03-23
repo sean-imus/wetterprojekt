@@ -4,6 +4,10 @@ from pathlib import Path
 zip_folder = "Wetterdaten"
 output_folder = "Wetterdaten_extracted"
 
+if not Path(zip_folder).exists():
+    print(f"Ordner {zip_folder} existiert nicht, bitte zuerst downloader.py ausführen")
+    exit()
+
 if Path(output_folder).exists():
     print("Ordner für extrahierte Wetterdaten existiert bereits, um Dateien erneut zu extrahieren, bitte Ordner löschen")
     exit()

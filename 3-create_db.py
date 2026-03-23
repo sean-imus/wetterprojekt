@@ -6,7 +6,13 @@ DB_NAME = "wetter.db"
 def create_database():
     db_path = Path(DB_NAME)
     if db_path.exists():
+        print("Datenbank existiert bereits. Wenn du fortfährst, werden alle Daten gelöscht!")
+        confirm = input("Trotzdem fortfahren? (j/n): ")
+        if confirm.lower() != 'j':
+            print("Abgebrochen.")
+            exit()
         db_path.unlink()
+        print("Alte Datenbank gelöscht.")
     
     conn = sqlite3.connect(DB_NAME)
     cursor = conn.cursor()
