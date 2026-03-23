@@ -39,4 +39,4 @@ for csv_file in csv_files:
 
 conn.commit()
 conn.close()
-print(f"{len(csv_files)} CSV Dateien importiert!")
+print(f"{len(csv_files)} .csv Dateien importiert!")
