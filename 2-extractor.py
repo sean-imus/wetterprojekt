@@ -19,7 +19,7 @@ if not zip_files:
     print(f"Keine .zip Dateien gefunden in {zip_folder} Ordner, bitte zuerst downloader.py ausführen")
     exit()
 
-for i, zip_file in enumerate(zip_files, 1):
+for zip_file in zip_files:
     with zipfile.ZipFile(zip_file, 'r') as z:
         z.extractall(output_folder)
     print(f"{zip_file.name} extrahiert!")
