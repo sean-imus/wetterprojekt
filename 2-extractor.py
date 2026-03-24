@@ -20,8 +20,8 @@ if not zip_files:
     exit()
 
 for zip_file in zip_files:
-    with zipfile.ZipFile(zip_file, 'r') as z:
-        z.extractall(output_folder)
+    with zipfile.ZipFile(zip_file, 'r') as zip:
+        zip.extractall(output_folder)
     print(f"{zip_file.name} extrahiert!")
 
 print(f"{len(zip_files)} Dateien extrahiert!")
