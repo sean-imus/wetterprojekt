@@ -5,7 +5,7 @@ db_file = "wetter.db"
 data_folder = "Extrahierte_Wetterdaten"
 
 if not Path(data_folder).exists():
-    print(f"{data_folder} Ordner existiert nicht, bitte zuerst extractor.py ausführen")
+    print(f"{data_folder} Ordner existiert nicht, bitte zuerst 2-extractor.py ausführen")
     exit()
 
 if Path(db_file).exists():
