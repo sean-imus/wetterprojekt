@@ -25,6 +25,7 @@ if not csv_files:
 conn = sqlite3.connect(db_file)
 cursor = conn.cursor()
 
+count = 0
 for csv_file in csv_files:
     with open(csv_file, "r") as f:
         reader = csv.reader(f, delimiter=";", skipinitialspace=True)
@@ -46,7 +47,8 @@ for csv_file in csv_files:
             cursor.execute(insert_sql, row)
         
         conn.commit()
+        count += 1
         print(f"{csv_file.name} importiert!")
 
 conn.close()
-print(f"{len(csv_files)} .csv Dateien importiert!")
+print(f"{count} .csv Dateien importiert!")
