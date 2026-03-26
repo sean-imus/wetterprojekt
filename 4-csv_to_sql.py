@@ -42,13 +42,15 @@ for csv_file in csv_files:
         placeholders = ",".join(["?"] * len(header))
         insert_sql = f"INSERT INTO tbl_messwerte ({columns}) VALUES ({placeholders})"
         
+        rows = []
         for row in reader:
             row = [cell.strip() for cell in row]
             if row and row[-1].lower() == "eor":
                 row = row[:-1]
-            if not row:
-                continue
-            cursor.execute(insert_sql, row)
+            if row:
+                rows.append(row)
+        
+        cursor.executemany(insert_sql, rows)
         
         conn.commit()
         count += 1
