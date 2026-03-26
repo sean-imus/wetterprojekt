@@ -15,9 +15,9 @@ if not Path(db_file).exists():
 
 conn = sqlite3.connect(db_file)
 cursor = conn.cursor()
-cursor.execute("SELECT COUNT(*) FROM tbl_messwerte")
+cursor.execute("SELECT 1 FROM tbl_messwerte LIMIT 1")
 if cursor.fetchone()[0] > 0:
-    print("Daten existieren bereits in der Datenbank, um Daten erneut zu importieren, bitte 3-create_db.py ausführen")
+    print("Daten existieren bereits in der Datenbank, um Daten erneut zu importieren, bitte Datenbank löschen")
     exit()
 conn.close()
 
@@ -52,9 +52,9 @@ for csv_file in csv_files:
         
         cursor.executemany(insert_sql, rows)
         
-        conn.commit()
         count += 1
         print(f"{csv_file.name} importiert!")
 
+conn.commit()
 conn.close()
 print(f"{count} .csv Dateien importiert!")
