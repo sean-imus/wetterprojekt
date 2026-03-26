@@ -9,6 +9,10 @@ if not Path(data_folder).exists():
     print(f"{data_folder} Ordner existiert nicht, bitte zuerst 2-extractor.py ausführen")
     exit()
 
+if not Path(db_file).exists():
+    print(f"{db_file} existiert nicht, bitte zuerst 3-create_db.py ausführen")
+    exit()
+
 conn = sqlite3.connect(db_file)
 cursor = conn.cursor()
 cursor.execute("SELECT COUNT(*) FROM tbl_messwerte")
