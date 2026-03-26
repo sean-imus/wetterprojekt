@@ -15,7 +15,7 @@ if not Path(db_file).exists():
 
 conn = sqlite3.connect(db_file)
 cursor = conn.cursor()
-cursor.execute("SELECT 1 FROM tbl_messwerte LIMIT 1")
+cursor.execute("SELECT COUNT(*) FROM tbl_messwerte")
 if cursor.fetchone()[0] > 0:
     print("Daten existieren bereits in der Datenbank, um Daten erneut zu importieren, bitte Datenbank löschen")
     exit()
