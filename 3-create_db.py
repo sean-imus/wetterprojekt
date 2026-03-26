@@ -39,6 +39,10 @@ cursor.execute("""
     );
 """)
 
+cursor.execute("CREATE INDEX idx_stations_id ON tbl_messwerte(STATIONS_ID);")
+cursor.execute("CREATE INDEX idx_mess_datum ON tbl_messwerte(MESS_DATUM);")
+
 conn.commit()
 conn.close()
 print("Datenbank erstellt!")
+print("Indizes erstellt: idx_stations_id, idx_mess_datum")
