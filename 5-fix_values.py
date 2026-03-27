@@ -50,7 +50,7 @@ cursor.execute("""
 count = cursor.rowcount
 conn.commit()
 
-print(f"{count} Werte ersetzt!")
+print("Werte ersetzt!")
 
 print("Erstellung der Indexe...")
 cursor.execute("CREATE INDEX idx_stations_id ON tbl_messwerte(STATIONS_ID);")

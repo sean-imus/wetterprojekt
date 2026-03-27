@@ -56,4 +56,4 @@ for csv_file in csv_files:
 conn.commit()
 conn.close()
 
-print(f"{count} .csv Dateien importiert!")
+print(".csv Dateien importiert!")

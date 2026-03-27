@@ -25,4 +25,4 @@ for zip_file in zip_files:
     with zipfile.ZipFile(zip_file, 'r') as z:
         z.extractall(output_folder)
 
-print(f"{count} Dateien extrahiert!")
+print("Dateien extrahiert!")
