@@ -19,11 +19,10 @@ if not zip_files:
     print(f"Keine .zip Dateien gefunden in {zip_folder}, bitte zuerst 1-downloader.py ausführen")
     exit()
 
-count = 0
+print("Dateien werden extrahiert...")
+
 for zip_file in zip_files:
     with zipfile.ZipFile(zip_file, 'r') as z:
         z.extractall(output_folder)
-    count += 1
-    print(f"{zip_file.name} extrahiert!")
 
 print(f"{count} Dateien extrahiert!")

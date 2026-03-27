@@ -11,14 +11,13 @@ if Path(output_folder).exists():
 
 Path(output_folder).mkdir()
 
+print("Dateien werden heruntergeladen...")
+
 entire_page = requests.get(url).text
 files = re.findall(r'href="([^"]+\.(?:zip|txt))"', entire_page)
 
-count = 0
 for file in files:
     data = requests.get(url + file).content
     open(Path(output_folder) / file, "wb").write(data)
-    count += 1
-    print(f"{file} heruntergeladen!")
 
-print(f"{count} Dateien heruntergeladen!")
+print("Dateien heruntergeladen!")

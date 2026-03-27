@@ -26,10 +26,11 @@ if not csv_files:
     print(f"Keine CSV Dateien gefunden in {data_folder}, bitte zuerst 2-extractor.py ausführen")
     exit()
 
+print(".csv Dateien werden importiert...")
+
 conn = sqlite3.connect(db_file)
 cursor = conn.cursor()
 
-count = 0
 for csv_file in csv_files:
     with open(csv_file, "r") as f:
         reader = csv.reader(f, delimiter=";", skipinitialspace=True)
@@ -51,10 +52,8 @@ for csv_file in csv_files:
                 rows.append(row)
         
         cursor.executemany(insert_sql, rows)
-        
-        count += 1
-        print(f"{csv_file.name} importiert!")
 
 conn.commit()
-print(f"{count} .csv Dateien importiert!")
 conn.close()
+
+print(f"{count} .csv Dateien importiert!")

@@ -12,6 +12,8 @@ if Path(db_file).exists():
     print(f"{db_file} existiert bereits, um Datenbank erneut zu erstellen, bitte Datenbank löschen")
     exit()
 
+print("Datenbank wird erstellt...")
+
 conn = sqlite3.connect(db_file)
 cursor = conn.cursor()
 

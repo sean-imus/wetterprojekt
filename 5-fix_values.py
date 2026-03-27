@@ -21,6 +21,8 @@ if cursor.fetchone()[0] == 0:
     print("Keine -999 Werte gefunden")
     exit()
 
+print("Werte werden ersetzt...")
+
 cursor.execute("""
     UPDATE tbl_messwerte SET
         FX = CASE WHEN FX = -999 THEN NULL ELSE FX END,
