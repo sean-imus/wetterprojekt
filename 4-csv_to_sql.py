@@ -32,8 +32,8 @@ conn = sqlite3.connect(db_file)
 cursor = conn.cursor()
 
 for csv_file in csv_files:
-    with open(csv_file, "r") as f:
-        reader = csv.reader(f, delimiter=";", skipinitialspace=True)
+    with open(csv_file, "r") as c:
+        reader = csv.reader(c, delimiter=";", skipinitialspace=True)
         header = next(reader)
         
         if header[-1].lower() == "eor":
