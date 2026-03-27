@@ -10,83 +10,49 @@ if not Path(db_file).exists():
 conn = sqlite3.connect(db_file)
 cursor = conn.cursor()
 
-cursor.execute("SELECT COUNT(*) FROM tbl_messwerte WHERE FX = -999 OR FM = -999 OR RSK = -999 OR RSKF = -999 OR SDK = -999 OR SHK_TAG = -999 OR NM = -999 OR VPM = -999 OR PM = -999 OR TMK = -999 OR TXK = -999 OR TNK = -999 OR TGK = -999 OR QN_3 = -999 OR QN_4 = -999 OR UPM = -999")
+cursor.execute("""
+    SELECT COUNT(*) FROM tbl_messwerte 
+    WHERE FX = -999 OR FM = -999 OR RSK = -999 OR RSKF = -999 OR SDK = -999 
+    OR SHK_TAG = -999 OR NM = -999 OR VPM = -999 OR PM = -999 OR TMK = -999 
+    OR TXK = -999 OR TNK = -999 OR TGK = -999 OR QN_3 = -999 OR QN_4 = -999 
+    OR UPM = -999
+""")
 if cursor.fetchone()[0] == 0:
     print("Keine -999 Werte gefunden")
     exit()
 
-conn.close()
+cursor.execute("""
+    UPDATE tbl_messwerte SET
+        FX = CASE WHEN FX = -999 THEN NULL ELSE FX END,
+        FM = CASE WHEN FM = -999 THEN NULL ELSE FM END,
+        RSK = CASE WHEN RSK = -999 THEN NULL ELSE RSK END,
+        RSKF = CASE WHEN RSKF = -999 THEN NULL ELSE RSKF END,
+        SDK = CASE WHEN SDK = -999 THEN NULL ELSE SDK END,
+        SHK_TAG = CASE WHEN SHK_TAG = -999 THEN NULL ELSE SHK_TAG END,
+        NM = CASE WHEN NM = -999 THEN NULL ELSE NM END,
+        VPM = CASE WHEN VPM = -999 THEN NULL ELSE VPM END,
+        PM = CASE WHEN PM = -999 THEN NULL ELSE PM END,
+        TMK = CASE WHEN TMK = -999 THEN NULL ELSE TMK END,
+        TXK = CASE WHEN TXK = -999 THEN NULL ELSE TXK END,
+        TNK = CASE WHEN TNK = -999 THEN NULL ELSE TNK END,
+        TGK = CASE WHEN TGK = -999 THEN NULL ELSE TGK END,
+        QN_3 = CASE WHEN QN_3 = -999 THEN NULL ELSE QN_3 END,
+        QN_4 = CASE WHEN QN_4 = -999 THEN NULL ELSE QN_4 END,
+        UPM = CASE WHEN UPM = -999 THEN NULL ELSE UPM END
+    WHERE FX = -999 OR FM = -999 OR RSK = -999 OR RSKF = -999 OR SDK = -999 
+    OR SHK_TAG = -999 OR NM = -999 OR VPM = -999 OR PM = -999 OR TMK = -999 
+    OR TXK = -999 OR TNK = -999 OR TGK = -999 OR QN_3 = -999 OR QN_4 = -999 
+    OR UPM = -999
+""")
 
-conn = sqlite3.connect(db_file)
-cursor = conn.cursor()
-
-count = 0
-
-cursor.execute("UPDATE tbl_messwerte SET FX = NULL WHERE FX = -999")
-count += cursor.rowcount
-print("FX ersetzt!")
-
-cursor.execute("UPDATE tbl_messwerte SET FM = NULL WHERE FM = -999")
-count += cursor.rowcount
-print("FM ersetzt!")
-
-cursor.execute("UPDATE tbl_messwerte SET RSK = NULL WHERE RSK = -999")
-count += cursor.rowcount
-print("RSK ersetzt!")
-
-cursor.execute("UPDATE tbl_messwerte SET RSKF = NULL WHERE RSKF = -999")
-count += cursor.rowcount
-print("RSKF ersetzt!")
-
-cursor.execute("UPDATE tbl_messwerte SET SDK = NULL WHERE SDK = -999")
-count += cursor.rowcount
-print("SDK ersetzt!")
-
-cursor.execute("UPDATE tbl_messwerte SET SHK_TAG = NULL WHERE SHK_TAG = -999")
-count += cursor.rowcount
-print("SHK_TAG ersetzt!")
-
-cursor.execute("UPDATE tbl_messwerte SET NM = NULL WHERE NM = -999")
-count += cursor.rowcount
-print("NM ersetzt!")
-
-cursor.execute("UPDATE tbl_messwerte SET VPM = NULL WHERE VPM = -999")
-count += cursor.rowcount
-print("VPM ersetzt!")
-
-cursor.execute("UPDATE tbl_messwerte SET PM = NULL WHERE PM = -999")
-count += cursor.rowcount
-print("PM ersetzt!")
-
-cursor.execute("UPDATE tbl_messwerte SET TMK = NULL WHERE TMK = -999")
-count += cursor.rowcount
-print("TMK ersetzt!")
-
-cursor.execute("UPDATE tbl_messwerte SET TXK = NULL WHERE TXK = -999")
-count += cursor.rowcount
-print("TXK ersetzt!")
-
-cursor.execute("UPDATE tbl_messwerte SET TNK = NULL WHERE TNK = -999")
-count += cursor.rowcount
-print("TNK ersetzt!")
-
-cursor.execute("UPDATE tbl_messwerte SET TGK = NULL WHERE TGK = -999")
-count += cursor.rowcount
-print("TGK ersetzt!")
-
-cursor.execute("UPDATE tbl_messwerte SET QN_3 = NULL WHERE QN_3 = -999")
-count += cursor.rowcount
-print("QN_3 ersetzt!")
-
-cursor.execute("UPDATE tbl_messwerte SET QN_4 = NULL WHERE QN_4 = -999")
-count += cursor.rowcount
-print("QN_4 ersetzt!")
-
-cursor.execute("UPDATE tbl_messwerte SET UPM = NULL WHERE UPM = -999")
-count += cursor.rowcount
-print("UPM ersetzt!")
-
+count = cursor.rowcount
 conn.commit()
-conn.close()
 
 print(f"{count} Werte ersetzt!")
+
+print("Erstellung der Indexe...")
+cursor.execute("CREATE INDEX idx_stations_id ON tbl_messwerte(STATIONS_ID);")
+cursor.execute("CREATE INDEX idx_mess_datum ON tbl_messwerte(MESS_DATUM);")
+print("Indexe erstellt!")
+
+conn.close()
