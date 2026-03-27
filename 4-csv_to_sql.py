@@ -57,8 +57,4 @@ for csv_file in csv_files:
 
 conn.commit()
 print(f"{count} .csv Dateien importiert!")
-print("Erstellung der Indexe...")
-cursor.execute("CREATE INDEX idx_stations_id ON tbl_messwerte(STATIONS_ID);")
-cursor.execute("CREATE INDEX idx_mess_datum ON tbl_messwerte(MESS_DATUM);")
-print("Indexe erstellt!")
 conn.close()
