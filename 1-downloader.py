@@ -14,7 +14,7 @@ Path(output_folder).mkdir()
 print("Dateien werden heruntergeladen...")
 
 entire_page = requests.get(url).text
-files = re.findall(r'href="([^"]+\.(?:zip|txt))"', entire_page)
+files = re.findall(r'href="([^"]+(?:zip|txt))"', entire_page)
 
 for file in files:
     data = requests.get(url + file).content
