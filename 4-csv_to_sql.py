@@ -21,7 +21,7 @@ if cursor.fetchone()[0] > 0:
     exit()
 conn.close()
 
-csv_files = list(Path(data_folder).glob("**/produkt_klima_tag_*.txt"))
+csv_files = list(Path(data_folder).glob("produkt_klima_tag_*.txt"))
 if not csv_files:
     print(f"Keine CSV Dateien gefunden in {data_folder}, bitte zuerst 2-extractor.py ausführen")
     exit()
