@@ -18,6 +18,17 @@ conn = sqlite3.connect(db_file)
 cursor = conn.cursor()
 
 cursor.execute("""
+    CREATE TABLE tbl_stationen (
+        STATIONS_ID INTEGER PRIMARY KEY,
+        Stationsname TEXT,
+        Bundesland TEXT,
+        Stationshoehe REAL,
+        geoBreite REAL,
+        geoLaenge REAL
+    )
+""")
+
+cursor.execute("""
     CREATE TABLE tbl_messwerte (
         Mid INTEGER PRIMARY KEY AUTOINCREMENT,
         STATIONS_ID INTEGER,
@@ -37,7 +48,8 @@ cursor.execute("""
         UPM INTEGER,
         TXK REAL,
         TNK REAL,
-        TGK REAL
+        TGK REAL,
+        FOREIGN KEY (STATIONS_ID) REFERENCES tbl_stationen(STATIONS_ID)
     );
 """)
 
