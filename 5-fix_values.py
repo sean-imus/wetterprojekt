@@ -55,6 +55,7 @@ print("Werte ersetzt!")
 print("Erstellung der Indexe...")
 cursor.execute("CREATE INDEX idx_stations_id ON tbl_messwerte(STATIONS_ID);")
 cursor.execute("CREATE INDEX idx_mess_datum ON tbl_messwerte(MESS_DATUM);")
+cursor.execute("CREATE INDEX idx_stationen_id ON tbl_stationen(STATIONS_ID);")
 print("Indexe erstellt!")
 
 conn.close()
