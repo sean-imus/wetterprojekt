@@ -6,6 +6,7 @@
 2. Dependencies installieren:
    ```bash
    pip install -r requirements.txt
+3. Ungefähr 7GB freien Speicherplatz
    ```
 
 ## Installation
