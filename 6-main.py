@@ -199,12 +199,8 @@ def run_query():
     station_id = station_str.split("(")[1].split(")")[0]
     metric = selected_metric.get()
 
-    col = col_map.get(metric)
-    unit = unit_map.get(metric)
-
-    if col not in col_map.values():
-        messagebox.showwarning("Fehler", "Ungültige Metrik")
-        return
+    col = col_map[metric]
+    unit = unit_map[metric]
 
     start_date = parse_date(start_day, start_month, start_year)
     end_date = parse_date(end_day, end_month, end_year)
