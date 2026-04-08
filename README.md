@@ -23,7 +23,7 @@ Führ die Skripte der Reihe nach aus:
 python 1-downloader.py
 python 2-extractor.py
 python 3-create_db.py
-python 4-csv_to_sql.py
+python 4-import_to_db.py
 python 5-fix_values.py
 python 6-main.py
 ```
@@ -35,7 +35,7 @@ python 6-main.py
 | 1-downloader.py | Lädt Wetterdaten vom DWD runter |
 | 2-extractor.py | Entpackt die ZIP-Dateien |
 | 3-create_db.py | Erstellt die SQLite-Datenbank und die Tabellen |
-| 4-csv_to_sql.py | Importiert Stationsmetadaten und CSV-Daten in die Datenbank |
+| 4-import_to_db.py | Importiert Stationsmetadaten und CSV-Daten in die Datenbank |
 | 5-fix_values.py | Ersetzt -999 durch NULL und erstellt Indizes |
 | 6-main.py | GUI zum Abfragen und Visualisieren der Daten |
 
