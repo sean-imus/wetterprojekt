@@ -1,11 +1,9 @@
 # Wetterprojekt
 
-## Setup
+## Vorbereitung
 
-### Prerequisites
-
-1. **Python 3.10+** required
-2. Install dependencies:
+1. **Python 3.10+** erforderlich
+2. Dependencies installieren:
    ```bash
    pip install -r requirements.txt
    ```
@@ -17,9 +15,9 @@ git clone https://github.com/sean-imus/wetterprojekt.git
 cd wetterprojekt
 ```
 
-## Quick Start
+## Nutzung
 
-Run the scripts in order:
+Führ die Skripte der Reihe nach aus:
 
 ```bash
 python 1-downloader.py
@@ -30,10 +28,31 @@ python 5-fix_values.py
 python 6-main.py
 ```
 
-## License
+## Skripte
 
-This project is free to use. Do whatever you want with it.
+| Skript | Beschreibung |
+|--------|---------------|
+| 1-downloader.py | Lädt Wetterdaten vom DWD runter |
+| 2-extractor.py | Entpackt die ZIP-Dateien |
+| 3-create_db.py | Erstellt die SQLite-Datenbank und die Tabellen |
+| 4-csv_to_sql.py | Importiert Stationsmetadaten und CSV-Daten in die Datenbank |
+| 5-fix_values.py | Ersetzt -999 durch NULL und erstellt Indizes |
+| 6-main.py | GUI zum Abfragen und Visualisieren der Daten |
 
-## Data Source
+## Funktionen
 
-Weather data from [Deutscher Wetterdienst (DWD)](https://opendata.dwd.de/climate_environment/CDC/observations_germany/climate/daily/kl/historical/)
+- Stationenauswahl nach Bundesland oder ganz Deutschland
+- Stationen durch Eingabe filtern
+- Mehrere Wettermetriken (Temperatur, Niederschlag, Schneehöhe, Wind, etc.)
+- Benutzerdefinierter Zeitraum (TT.MM.JJJJ Format)
+- Matplotlib-Visualisierung
+- Statistiken: Durchschnitt, Minimum, Maximum
+
+## Datenbankschema
+
+- `tbl_stationen` - Stationsmetadaten (ID, Name, Bundesland, Höhe, Koordinaten)
+- `tbl_messwerte` - Wetterdaten mit Fremdschlüssel zu tbl_stationen
+
+## Datenquelle
+
+Wetterdaten vom [Deutschen Wetterdienst (DWD)](https://opendata.dwd.de/climate_environment/CDC/observations_germany/climate/daily/kl/historical/)
