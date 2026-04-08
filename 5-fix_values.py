@@ -47,7 +47,6 @@ cursor.execute("""
     OR UPM = -999
 """)
 
-count = cursor.rowcount
 conn.commit()
 
 print("Werte ersetzt!")
