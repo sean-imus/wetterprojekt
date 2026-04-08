@@ -16,7 +16,7 @@ cursor = conn.cursor()
 
 cursor.execute("SELECT COUNT(*) FROM tbl_stationen")
 if cursor.fetchone()[0] == 0:
-    print("Stationstabelle nicht gefunden! Bitte zuerst 4-csv_to_sql.py ausführen")
+    print("Stationstabelle existiert nicht, bitte zuerst 4-csv_to_sql.py ausführen")
     exit()
 
 cursor.execute("SELECT DISTINCT Bundesland FROM tbl_stationen WHERE Bundesland != '' ORDER BY Bundesland")
