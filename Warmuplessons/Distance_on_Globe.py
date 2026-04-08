@@ -10,7 +10,7 @@ def berechne_distanz(lat1, lon1, lat2, lon2):
     c = 2 * math.atan2(math.sqrt(a), math.sqrt(1-a))
     return R * c
 
-# Standardwerte: Bochum -> Köln
+# Bochum -> Köln
 lat1 = 51.4818
 lon1 = 7.2162
 lat2 = 50.9375
