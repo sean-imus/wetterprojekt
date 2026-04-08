@@ -7,7 +7,7 @@
    ```bash
    pip install -r requirements.txt
    ```
-3. Ungefähr 7GB freien Speicherplatz werden benötigt für alle Dateien
+3. Ungefähr 7GB freien Speicherplatz werden benötigt
 
 ## Installation
 
