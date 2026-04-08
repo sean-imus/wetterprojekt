@@ -1,5 +1,12 @@
 # Wetterprojekt
 
+## Installation
+
+```bash
+git clone https://github.com/sean-imus/wetterprojekt.git
+cd wetterprojekt
+```
+
 ## Vorbereitung
 
 1. **Python 3.10+** erforderlich
@@ -8,13 +15,6 @@
    pip install -r requirements.txt
    ```
 3. Ungefähr 7GB freier Speicherplatz werden benötigt
-
-## Installation
-
-```bash
-git clone https://github.com/sean-imus/wetterprojekt.git
-cd wetterprojekt
-```
 
 ## Nutzung
 
