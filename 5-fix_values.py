@@ -4,7 +4,7 @@ from pathlib import Path
 db_path = "wetter.db"
 
 if not Path(db_path).exists():
-    print(f"{db_path} existiert nicht, bitte zuerst 4-csv_to_sql.py ausführen")
+    print(f"{db_path} existiert nicht, bitte zuerst 4-import_to_db.py ausführen")
     exit()
 
 conn = sqlite3.connect(db_path)

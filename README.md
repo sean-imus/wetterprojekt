@@ -45,7 +45,7 @@ python 6-main.py
 - Stationenauswahl nach Bundesland oder ganz Deutschland
 - Stationen durch Eingabe filtern
 - Mehrere Wettermetriken (Temperatur, Niederschlag, Schneehöhe, Wind, etc.)
-- Benutzerdefinierter Zeitraum (TT.MM.JJJJ Format)
+- Benutzerdefinierter Zeitraum (Tag, Monat und Jahr Eingabefelder)
 - Matplotlib-Visualisierung
 - Statistiken: Durchschnitt, Minimum, Maximum
 
