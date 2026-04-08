@@ -26,7 +26,6 @@ cursor.execute("SELECT COUNT(*) FROM tbl_messwerte")
 if cursor.fetchone()[0] > 0:
     print("Daten existieren bereits in der Datenbank, um Daten erneut zu importieren, bitte Datenbank löschen")
     exit()
-conn.close()
 
 csv_files = list(Path(data_dir).glob("produkt_klima_tag_*.txt"))
 if not csv_files:

@@ -202,6 +202,10 @@ def run_query():
     col = col_map.get(metric)
     unit = unit_map.get(metric)
 
+    if col not in col_map.values():
+        messagebox.showwarning("Fehler", "Ungültige Metrik")
+        return
+
     start_date = parse_date(start_day, start_month, start_year)
     end_date = parse_date(end_day, end_month, end_year)
 
@@ -213,8 +217,8 @@ def run_query():
         messagebox.showwarning("Fehler", "Startdatum muss vor Enddatum liegen")
         return
 
+    conn = sqlite3.connect(db_path)
     try:
-        conn = sqlite3.connect(db_path)
         cursor = conn.cursor()
 
         if start_date == end_date:

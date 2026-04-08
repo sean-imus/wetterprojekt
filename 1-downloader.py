@@ -13,11 +13,23 @@ Path(output_dir).mkdir()
 
 print("Dateien werden heruntergeladen...")
 
-entire_page = requests.get(url).text
+try:
+    entire_page = requests.get(url, timeout=30).text
+except requests.RequestException as e:
+    print(f"Fehler beim Abrufen der Seite: {e}")
+    exit()
+
 files = re.findall(r'href="([^"]+(?:zip|txt))"', entire_page)
 
-for file in files:
-    data = requests.get(url + file).content
-    open(Path(output_dir) / file, "wb").write(data)
+for i, file in enumerate(files, 1):
+    print(f"Downloading ({i}/{len(files)}): {file}")
+    try:
+        response = requests.get(url + file, timeout=60)
+        response.raise_for_status()
+        with open(Path(output_dir) / file, "wb") as f:
+            f.write(response.content)
+    except requests.RequestException as e:
+        print(f"Fehler beim Herunterladen von {file}: {e}")
+        continue
 
 print("Dateien heruntergeladen!")
