@@ -1,20 +1,20 @@
 import sqlite3
 from pathlib import Path
 
-db_file = "wetter.db"
-data_folder = "Extrahierte_Wetterdaten"
+db_path = "wetter.db"
+data_dir = "Extrahierte_Wetterdaten"
 
-if not Path(data_folder).exists():
-    print(f"{data_folder} Ordner existiert nicht, bitte zuerst 2-extractor.py ausführen")
+if not Path(data_dir).exists():
+    print(f"{data_dir} Ordner existiert nicht, bitte zuerst 2-extractor.py ausführen")
     exit()
 
-if Path(db_file).exists():
-    print(f"{db_file} existiert bereits, um Datenbank erneut zu erstellen, bitte Datenbank löschen")
+if Path(db_path).exists():
+    print(f"{db_path} existiert bereits, um Datenbank erneut zu erstellen, bitte Datenbank löschen")
     exit()
 
 print("Datenbank wird erstellt...")
 
-conn = sqlite3.connect(db_file)
+conn = sqlite3.connect(db_path)
 cursor = conn.cursor()
 
 cursor.execute("""
