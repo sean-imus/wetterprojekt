@@ -21,8 +21,7 @@ except requests.RequestException as e:
 
 files = re.findall(r'href="([^"]+(?:zip|txt))"', entire_page)
 
-for i, file in enumerate(files, 1):
-    print(f"Downloading ({i}/{len(files)}): {file}")
+for file in files:
     try:
         response = requests.get(url + file, timeout=60)
         response.raise_for_status()
