@@ -86,36 +86,6 @@ end_year = ttk.Spinbox(middle, from_=min_year, to=max_year, width=6)
 end_year.pack(side="left", padx=2)
 end_year.set(max_year)
 
-def get_max_day(month, year):
-    if month in [4, 6, 9, 11]:
-        return 30
-    elif month == 2:
-        if (year % 4 == 0 and year % 100 != 0) or (year % 400 == 0):
-            return 29
-        return 28
-    return 31
-
-def validate_spinbox(day_spinbox, month_spinbox, year_spinbox):
-    try:
-        month = int(month_spinbox.get())
-        year = int(year_spinbox.get())
-        if 1 <= month <= 12 and min_year <= year <= max_year:
-            max_day = get_max_day(month, year)
-            day_spinbox.config(to=max_day)
-            current_val = int(day_spinbox.get())
-            if current_val > max_day:
-                day_spinbox.set(max_day)
-    except ValueError:
-        pass
-
-def on_start_date_change(*args):
-    validate_spinbox(start_day, start_month, start_year)
-
-def on_end_date_change(*args):
-    validate_spinbox(end_day, end_month, end_year)
-
-validate_spinbox(end_day, end_month, end_year)
-
 chart_frame = ttk.Frame(root, padding="10")
 chart_frame.pack(fill="both", expand=True)
 
@@ -154,6 +124,31 @@ unit_map = {
     "Luftfeuchtigkeit": "%", "Bedeckung": "%"
 }
 
+
+def get_max_day(month, year):
+    if month in [4, 6, 9, 11]:
+        return 30
+    elif month == 2:
+        if (year % 4 == 0 and year % 100 != 0) or (year % 400 == 0):
+            return 29
+        return 28
+    return 31
+
+
+def validate_spinbox(day_spinbox, month_spinbox, year_spinbox):
+    try:
+        month = int(month_spinbox.get())
+        year = int(year_spinbox.get())
+        if 1 <= month <= 12 and min_year <= year <= max_year:
+            max_day = get_max_day(month, year)
+            day_spinbox.config(to=max_day)
+            current_val = int(day_spinbox.get())
+            if current_val > max_day:
+                day_spinbox.set(max_day)
+    except ValueError:
+        pass
+
+
 def get_filtered_stations(state=None):
     if state == "Alle" or not state:
         stations = [(sid, data["name"]) for sid, data in stations_data.items()]
@@ -161,15 +156,6 @@ def get_filtered_stations(state=None):
         stations = [(sid, data["name"]) for sid, data in stations_data.items() if data["state"] == state]
     return sorted(stations, key=lambda x: x[1])
 
-def filter_state(*args):
-    typed = selected_state.get().lower()
-    if typed == "":
-        state_combo["values"] = states
-    elif "alle".startswith(typed):
-        state_combo["values"] = ["Alle"]
-    else:
-        filtered = [s for s in states if s.lower().startswith(typed)]
-        state_combo["values"] = filtered
 
 def filter_station(*args):
     typed = selected_station.get().lower()
@@ -183,11 +169,13 @@ def filter_station(*args):
 
     station_combo["values"] = [f"{name} ({sid})" for sid, name in station_options]
 
+
 def on_state_changed(*args):
     state = selected_state.get()
     stations = get_filtered_stations(state)
     station_combo["values"] = [f"{name} ({sid})" for sid, name in stations]
     selected_station.set("")
+
 
 def parse_date(day_spinbox, month_spinbox, year_spinbox):
     try:
@@ -201,6 +189,7 @@ def parse_date(day_spinbox, month_spinbox, year_spinbox):
     except ValueError:
         return None
 
+
 def run_query():
     station_str = selected_station.get()
     if not station_str:
@@ -210,8 +199,8 @@ def run_query():
     station_id = station_str.split("(")[1].split(")")[0]
     metric = selected_metric.get()
 
-    col = col_map[metric]
-    unit = unit_map[metric]
+    col = col_map.get(metric)
+    unit = unit_map.get(metric)
 
     start_date = parse_date(start_day, start_month, start_year)
     end_date = parse_date(end_day, end_month, end_year)
@@ -224,26 +213,28 @@ def run_query():
         messagebox.showwarning("Fehler", "Startdatum muss vor Enddatum liegen")
         return
 
-    conn = sqlite3.connect(db_path)
-    cursor = conn.cursor()
+    try:
+        conn = sqlite3.connect(db_path)
+        cursor = conn.cursor()
 
-    if start_date == end_date:
-        cursor.execute(f"""
-            SELECT MESS_DATUM, {col} 
-            FROM tbl_messwerte 
-            WHERE STATIONS_ID = ? AND {col} IS NOT NULL AND MESS_DATUM = ?
-            ORDER BY MESS_DATUM
-        """, (station_id, start_date))
-    else:
-        cursor.execute(f"""
-            SELECT MESS_DATUM, {col} 
-            FROM tbl_messwerte 
-            WHERE STATIONS_ID = ? AND {col} IS NOT NULL AND MESS_DATUM >= ? AND MESS_DATUM <= ?
-            ORDER BY MESS_DATUM
-        """, (station_id, start_date, end_date))
+        if start_date == end_date:
+            cursor.execute(f"""
+                SELECT MESS_DATUM, {col} 
+                FROM tbl_messwerte 
+                WHERE STATIONS_ID = ? AND {col} IS NOT NULL AND MESS_DATUM = ?
+                ORDER BY MESS_DATUM
+            """, (station_id, start_date))
+        else:
+            cursor.execute(f"""
+                SELECT MESS_DATUM, {col} 
+                FROM tbl_messwerte 
+                WHERE STATIONS_ID = ? AND {col} IS NOT NULL AND MESS_DATUM >= ? AND MESS_DATUM <= ?
+                ORDER BY MESS_DATUM
+            """, (station_id, start_date, end_date))
 
-    results = cursor.fetchall()
-    conn.close()
+        results = cursor.fetchall()
+    finally:
+        conn.close()
 
     if not results:
         messagebox.showinfo("Keine Daten", "Keine Daten für diese Station im gewählten Zeitraum")
@@ -276,23 +267,19 @@ def run_query():
     min_label.config(text=f"Minimum: {min_val:.1f} {unit}")
     max_label.config(text=f"Maximum: {max_val:.1f} {unit}")
 
+
 state_combo.bind("<<ComboboxSelected>>", on_state_changed)
-state_combo.bind("<KeyRelease>", filter_state)
 station_combo.bind("<KeyRelease>", filter_station)
 
-start_day.bind("<<Increment>>", on_start_date_change)
-start_day.bind("<<Decrement>>", on_start_date_change)
-start_month.bind("<<Increment>>", on_start_date_change)
-start_month.bind("<<Decrement>>", on_start_date_change)
-start_year.bind("<<Increment>>", on_start_date_change)
-start_year.bind("<<Decrement>>", on_start_date_change)
+for spinbox in (start_day, start_month, start_year):
+    spinbox.bind("<<Increment>>", lambda e: validate_spinbox(start_day, start_month, start_year))
+    spinbox.bind("<<Decrement>>", lambda e: validate_spinbox(start_day, start_month, start_year))
 
-end_day.bind("<<Increment>>", on_end_date_change)
-end_day.bind("<<Decrement>>", on_end_date_change)
-end_month.bind("<<Increment>>", on_end_date_change)
-end_month.bind("<<Decrement>>", on_end_date_change)
-end_year.bind("<<Increment>>", on_end_date_change)
-end_year.bind("<<Decrement>>", on_end_date_change)
+for spinbox in (end_day, end_month, end_year):
+    spinbox.bind("<<Increment>>", lambda e: validate_spinbox(end_day, end_month, end_year))
+    spinbox.bind("<<Decrement>>", lambda e: validate_spinbox(end_day, end_month, end_year))
+
+validate_spinbox(end_day, end_month, end_year)
 
 ttk.Button(middle, text="Abfrage starten", command=run_query).pack(side="left", padx=15)
 
