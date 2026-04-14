@@ -17,10 +17,10 @@
           python314Packages.matplotlib
           sqlite
         ];
-	env = [
-	  { name = "p"; value = "python3"; }
-	  { name = "sql"; value = "sqlite3"; }
-	];
+        shellHook = ''
+          alias p=python3
+          alias sql=sqlite3
+        '';      
       };
     };
 }
