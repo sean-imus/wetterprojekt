@@ -17,7 +17,6 @@
           python314Packages.tkinter
           python314Packages.matplotlib
           sqlite
-          bash
         ];
         shellHook = ''
           alias p=python3
