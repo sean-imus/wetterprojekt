@@ -243,6 +243,9 @@ def run_query():
     dates = [r[0] for r in results]
     values = [r[1] for r in results]
 
+    if metric == "Bedeckung":
+        values = [v * 12.5 for v in values]
+
     avg = sum(values) / len(values)
     min_val = min(values)
     max_val = max(values)
