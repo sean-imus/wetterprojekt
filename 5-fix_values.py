@@ -17,6 +17,7 @@ cursor.execute("""
     OR TXK = -999 OR TNK = -999 OR TGK = -999 OR QN_3 = -999 OR QN_4 = -999 
     OR UPM = -999
 """)
+
 if cursor.fetchone()[0] == 0:
     print("Keine -999 Werte gefunden")
     exit()
