@@ -21,7 +21,6 @@
         shellHook = ''
           alias p=python3
           alias sql=sqlite3
-          alias lg=lazygit
         '';
       };
     };
