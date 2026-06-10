@@ -10,21 +10,10 @@ if not Path(db_path).exists():
 conn = sqlite3.connect(db_path)
 cursor = conn.cursor()
 
-cursor.execute("""
-    SELECT COUNT(*) FROM tbl_messwerte 
-    WHERE FX = -999 OR FM = -999 OR RSK = -999 OR RSKF = -999 OR SDK = -999 
-    OR SHK_TAG = -999 OR NM = -999 OR VPM = -999 OR PM = -999 OR TMK = -999 
-    OR TXK = -999 OR TNK = -999 OR TGK = -999 OR QN_3 = -999 OR QN_4 = -999 
-    OR UPM = -999
-""")
-
-if cursor.fetchone()[0] == 0:
-    print("Keine -999 Werte gefunden")
-    exit()
-
 print("Werte werden ersetzt...")
 
-cursor.execute("""
+cursor.execute(
+    """
     UPDATE tbl_messwerte SET
         FX = CASE WHEN FX = -999 THEN NULL ELSE FX END,
         FM = CASE WHEN FM = -999 THEN NULL ELSE FM END,
@@ -42,23 +31,28 @@ cursor.execute("""
         QN_3 = CASE WHEN QN_3 = -999 THEN NULL ELSE QN_3 END,
         QN_4 = CASE WHEN QN_4 = -999 THEN NULL ELSE QN_4 END,
         UPM = CASE WHEN UPM = -999 THEN NULL ELSE UPM END
-    WHERE FX = -999 OR FM = -999 OR RSK = -999 OR RSKF = -999 OR SDK = -999 
-    OR SHK_TAG = -999 OR NM = -999 OR VPM = -999 OR PM = -999 OR TMK = -999 
-    OR TXK = -999 OR TNK = -999 OR TGK = -999 OR QN_3 = -999 OR QN_4 = -999 
-    OR UPM = -999
-""")
+"""
+)
 
 conn.commit()
-
 print("Werte ersetzt!")
 
-print("Erstellung der Indexe...")
-cursor.execute("CREATE INDEX idx_stations_id ON tbl_messwerte(STATIONS_ID);")
-cursor.execute("CREATE INDEX idx_mess_datum ON tbl_messwerte(MESS_DATUM);")
-cursor.execute("CREATE INDEX idx_stationen_id ON tbl_stationen(STATIONS_ID);")
-cursor.execute("CREATE INDEX idx_messwerte_station_date ON tbl_messwerte(STATIONS_ID, MESS_DATUM);")
-cursor.execute("CREATE INDEX idx_stationen_bundesland ON tbl_stationen(Bundesland);")
-cursor.execute("CREATE INDEX idx_stationen_name ON tbl_stationen(Stationsname);")
-print("Indexe erstellt!")
-
+print("Indizes werden erstellt...")
+cursor.execute(
+    "CREATE INDEX IF NOT EXISTS idx_stations_id ON tbl_messwerte(STATIONS_ID)"
+)
+cursor.execute("CREATE INDEX IF NOT EXISTS idx_mess_datum ON tbl_messwerte(MESS_DATUM)")
+cursor.execute(
+    "CREATE INDEX IF NOT EXISTS idx_stationen_id ON tbl_stationen(STATIONS_ID)"
+)
+cursor.execute(
+    "CREATE INDEX IF NOT EXISTS idx_messwerte_station_date ON tbl_messwerte(STATIONS_ID, MESS_DATUM)"
+)
+cursor.execute(
+    "CREATE INDEX IF NOT EXISTS idx_stationen_bundesland ON tbl_stationen(Bundesland)"
+)
+cursor.execute(
+    "CREATE INDEX IF NOT EXISTS idx_stationen_name ON tbl_stationen(Stationsname)"
+)
 conn.close()
+print("Indizes erstellt!")
