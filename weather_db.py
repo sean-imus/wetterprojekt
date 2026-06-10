@@ -26,6 +26,70 @@ class WeatherDB:
 
         conn.close()
 
+    def get_yearly_averages(self, col, start_year, end_year, station_id=None):
+        conn = sqlite3.connect(self.db_path)
+        try:
+            cursor = conn.cursor()
+            start_date = f"{start_year}0101"
+            end_date = f"{end_year}1231"
+            if station_id:
+                cursor.execute(
+                    f"""
+                    SELECT substr(MESS_DATUM, 1, 4) AS year, AVG({col})
+                    FROM tbl_messwerte
+                    WHERE {col} IS NOT NULL AND STATIONS_ID = ?
+                      AND MESS_DATUM >= ? AND MESS_DATUM <= ?
+                    GROUP BY year ORDER BY year
+                """,
+                    (station_id, start_date, end_date),
+                )
+            else:
+                cursor.execute(
+                    f"""
+                    SELECT substr(MESS_DATUM, 1, 4) AS year, AVG({col})
+                    FROM tbl_messwerte
+                    WHERE {col} IS NOT NULL
+                      AND MESS_DATUM >= ? AND MESS_DATUM <= ?
+                    GROUP BY year ORDER BY year
+                """,
+                    (start_date, end_date),
+                )
+            return cursor.fetchall()
+        finally:
+            conn.close()
+
+    def get_monthly_averages(self, col, year, station_id=None):
+        conn = sqlite3.connect(self.db_path)
+        try:
+            cursor = conn.cursor()
+            start_date = f"{year}0101"
+            end_date = f"{year}1231"
+            if station_id:
+                cursor.execute(
+                    f"""
+                    SELECT substr(MESS_DATUM, 5, 2) AS month, AVG({col})
+                    FROM tbl_messwerte
+                    WHERE {col} IS NOT NULL AND STATIONS_ID = ?
+                      AND MESS_DATUM >= ? AND MESS_DATUM <= ?
+                    GROUP BY month ORDER BY month
+                """,
+                    (station_id, start_date, end_date),
+                )
+            else:
+                cursor.execute(
+                    f"""
+                    SELECT substr(MESS_DATUM, 5, 2) AS month, AVG({col})
+                    FROM tbl_messwerte
+                    WHERE {col} IS NOT NULL
+                      AND MESS_DATUM >= ? AND MESS_DATUM <= ?
+                    GROUP BY month ORDER BY month
+                """,
+                    (start_date, end_date),
+                )
+            return cursor.fetchall()
+        finally:
+            conn.close()
+
     def get_measurements(self, station_id, col, start_date, end_date):
         conn = sqlite3.connect(self.db_path)
         try:
