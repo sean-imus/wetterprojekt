@@ -16,12 +16,13 @@
           python314Packages.requests
           python314Packages.tkinter
           python314Packages.matplotlib
+          python314Packages.pytest
           sqlite
         ];
         shellHook = ''
-          alias p=python3
-          alias sql=sqlite3
-	  alias n=nvim
+                    alias p=python3
+                    alias sql=sqlite3
+          	  alias n=nvim
         '';
       };
     };
