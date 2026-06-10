@@ -1,9 +1,10 @@
-import sqlite3
 import tkinter as tk
 from tkinter import ttk, messagebox
 from matplotlib.figure import Figure
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 from pathlib import Path
+
+from weather_db import WeatherDB
 
 db_path = "wetter.db"
 
@@ -11,28 +12,11 @@ if not Path(db_path).exists():
     print("Datenbank nicht gefunden!")
     exit()
 
-conn = sqlite3.connect(db_path)
-cursor = conn.cursor()
-
-cursor.execute("SELECT COUNT(*) FROM tbl_stationen")
-if cursor.fetchone()[0] == 0:
-    print("Stationstabelle existiert nicht, bitte zuerst 4-csv_to_sql.py ausführen")
-    exit()
-
-cursor.execute("SELECT DISTINCT Bundesland FROM tbl_stationen WHERE Bundesland != '' ORDER BY Bundesland")
-states = ["Alle"] + [row[0] for row in cursor.fetchall()]
-
-cursor.execute("SELECT STATIONS_ID, Stationsname, Bundesland FROM tbl_stationen ORDER BY Stationsname")
-stations_data = {}
-for row in cursor.fetchall():
-    stations_data[row[0]] = {"name": row[1], "state": row[2]}
-
-cursor.execute("SELECT MIN(MESS_DATUM), MAX(MESS_DATUM) FROM tbl_messwerte")
-date_range = cursor.fetchone()
-min_year = int(date_range[0][:4]) if date_range[0] else 1900
-max_year = int(date_range[1][:4]) if date_range[1] else 2100
-
-conn.close()
+db = WeatherDB(db_path)
+states = db.states
+stations_data = db.stations_data
+min_year = db.min_year
+max_year = db.max_year
 
 root = tk.Tk()
 root.title("Wetterdaten")
@@ -46,19 +30,37 @@ top = ttk.Frame(root, padding="10")
 top.pack(fill="x")
 
 ttk.Label(top, text="Bundesland:").pack(side="left", padx=5)
-state_combo = ttk.Combobox(top, textvariable=selected_state, values=states, state="normal", width=18)
+state_combo = ttk.Combobox(
+    top, textvariable=selected_state, values=states, state="normal", width=18
+)
 state_combo.pack(side="left", padx=5)
 
 ttk.Label(top, text="Station:").pack(side="left", padx=5)
-station_combo = ttk.Combobox(top, textvariable=selected_station, state="normal", width=25)
+station_combo = ttk.Combobox(
+    top, textvariable=selected_station, state="normal", width=25
+)
 station_combo.pack(side="left", padx=5)
 
 ttk.Label(top, text="Metrik:").pack(side="left", padx=5)
-metric_combo = ttk.Combobox(top, textvariable=selected_metric, values=[
-    "Temperatur (Mittel)", "Temperatur (Max)", "Temperatur (Min)",
-    "Niederschlag", "Schneehöhe", "Wind (Max)", "Wind (Mittel)",
-    "Sonnenscheindauer", "Luftdruck", "Luftfeuchtigkeit", "Bedeckung"
-], state="readonly", width=18)
+metric_combo = ttk.Combobox(
+    top,
+    textvariable=selected_metric,
+    values=[
+        "Temperatur (Mittel)",
+        "Temperatur (Max)",
+        "Temperatur (Min)",
+        "Niederschlag",
+        "Schneehöhe",
+        "Wind (Max)",
+        "Wind (Mittel)",
+        "Sonnenscheindauer",
+        "Luftdruck",
+        "Luftfeuchtigkeit",
+        "Bedeckung",
+    ],
+    state="readonly",
+    width=18,
+)
 metric_combo.pack(side="left", padx=5)
 
 middle = ttk.Frame(root, padding="10")
@@ -111,17 +113,31 @@ max_label = ttk.Label(stats_frame, text="Maximum: -", font=("Arial", 12, "bold")
 max_label.grid(row=0, column=2, padx=10)
 
 col_map = {
-    "Temperatur (Mittel)": "TMK", "Temperatur (Max)": "TXK", "Temperatur (Min)": "TNK",
-    "Niederschlag": "RSK", "Schneehöhe": "SHK_TAG", "Wind (Max)": "FX",
-    "Wind (Mittel)": "FM", "Sonnenscheindauer": "SDK", "Luftdruck": "PM",
-    "Luftfeuchtigkeit": "UPM", "Bedeckung": "NM"
+    "Temperatur (Mittel)": "TMK",
+    "Temperatur (Max)": "TXK",
+    "Temperatur (Min)": "TNK",
+    "Niederschlag": "RSK",
+    "Schneehöhe": "SHK_TAG",
+    "Wind (Max)": "FX",
+    "Wind (Mittel)": "FM",
+    "Sonnenscheindauer": "SDK",
+    "Luftdruck": "PM",
+    "Luftfeuchtigkeit": "UPM",
+    "Bedeckung": "NM",
 }
 
 unit_map = {
-    "Temperatur (Mittel)": "°C", "Temperatur (Max)": "°C", "Temperatur (Min)": "°C",
-    "Niederschlag": "mm", "Schneehöhe": "cm", "Wind (Max)": "km/h",
-    "Wind (Mittel)": "km/h", "Sonnenscheindauer": "h", "Luftdruck": "hPa",
-    "Luftfeuchtigkeit": "%", "Bedeckung": "%"
+    "Temperatur (Mittel)": "°C",
+    "Temperatur (Max)": "°C",
+    "Temperatur (Min)": "°C",
+    "Niederschlag": "mm",
+    "Schneehöhe": "cm",
+    "Wind (Max)": "km/h",
+    "Wind (Mittel)": "km/h",
+    "Sonnenscheindauer": "h",
+    "Luftdruck": "hPa",
+    "Luftfeuchtigkeit": "%",
+    "Bedeckung": "%",
 }
 
 
@@ -153,7 +169,11 @@ def get_filtered_stations(state=None):
     if state == "Alle" or not state:
         stations = [(sid, data["name"]) for sid, data in stations_data.items()]
     else:
-        stations = [(sid, data["name"]) for sid, data in stations_data.items() if data["state"] == state]
+        stations = [
+            (sid, data["name"])
+            for sid, data in stations_data.items()
+            if data["state"] == state
+        ]
     return sorted(stations, key=lambda x: x[1])
 
 
@@ -165,7 +185,9 @@ def filter_station(*args):
     if typed == "":
         station_options = stations
     else:
-        station_options = [(sid, name) for sid, name in stations if name.lower().startswith(typed)]
+        station_options = [
+            (sid, name) for sid, name in stations if name.lower().startswith(typed)
+        ]
 
     station_combo["values"] = [f"{name} ({sid})" for sid, name in station_options]
 
@@ -183,7 +205,9 @@ def parse_date(day_spinbox, month_spinbox, year_spinbox):
         month = int(month_spinbox.get())
         year = int(year_spinbox.get())
         max_day = get_max_day(month, year)
-        if not (1 <= day <= max_day and 1 <= month <= 12 and min_year <= year <= max_year):
+        if not (
+            1 <= day <= max_day and 1 <= month <= 12 and min_year <= year <= max_year
+        ):
             return None
         return f"{year}{month:02d}{day:02d}"
     except ValueError:
@@ -213,31 +237,12 @@ def run_query():
         messagebox.showwarning("Fehler", "Startdatum muss vor Enddatum liegen")
         return
 
-    conn = sqlite3.connect(db_path)
-    try:
-        cursor = conn.cursor()
-
-        if start_date == end_date:
-            cursor.execute(f"""
-                SELECT MESS_DATUM, {col} 
-                FROM tbl_messwerte 
-                WHERE STATIONS_ID = ? AND {col} IS NOT NULL AND MESS_DATUM = ?
-                ORDER BY MESS_DATUM
-            """, (station_id, start_date))
-        else:
-            cursor.execute(f"""
-                SELECT MESS_DATUM, {col} 
-                FROM tbl_messwerte 
-                WHERE STATIONS_ID = ? AND {col} IS NOT NULL AND MESS_DATUM >= ? AND MESS_DATUM <= ?
-                ORDER BY MESS_DATUM
-            """, (station_id, start_date, end_date))
-
-        results = cursor.fetchall()
-    finally:
-        conn.close()
+    results = db.get_measurements(station_id, col, start_date, end_date)
 
     if not results:
-        messagebox.showinfo("Keine Daten", "Keine Daten für diese Station im gewählten Zeitraum")
+        messagebox.showinfo(
+            "Keine Daten", "Keine Daten für diese Station im gewählten Zeitraum"
+        )
         return
 
     dates = [r[0] for r in results]
@@ -261,7 +266,11 @@ def run_query():
 
     step = max(1, len(display_dates) // 8)
     ax.set_xticks(range(0, len(display_dates), step))
-    ax.set_xticklabels([display_dates[i] for i in range(0, len(display_dates), step)], rotation=45, ha="right")
+    ax.set_xticklabels(
+        [display_dates[i] for i in range(0, len(display_dates), step)],
+        rotation=45,
+        ha="right",
+    )
 
     fig.tight_layout()
     canvas.draw()
@@ -275,12 +284,20 @@ state_combo.bind("<<ComboboxSelected>>", on_state_changed)
 station_combo.bind("<KeyRelease>", filter_station)
 
 for spinbox in (start_day, start_month, start_year):
-    spinbox.bind("<<Increment>>", lambda e: validate_spinbox(start_day, start_month, start_year))
-    spinbox.bind("<<Decrement>>", lambda e: validate_spinbox(start_day, start_month, start_year))
+    spinbox.bind(
+        "<<Increment>>", lambda e: validate_spinbox(start_day, start_month, start_year)
+    )
+    spinbox.bind(
+        "<<Decrement>>", lambda e: validate_spinbox(start_day, start_month, start_year)
+    )
 
 for spinbox in (end_day, end_month, end_year):
-    spinbox.bind("<<Increment>>", lambda e: validate_spinbox(end_day, end_month, end_year))
-    spinbox.bind("<<Decrement>>", lambda e: validate_spinbox(end_day, end_month, end_year))
+    spinbox.bind(
+        "<<Increment>>", lambda e: validate_spinbox(end_day, end_month, end_year)
+    )
+    spinbox.bind(
+        "<<Decrement>>", lambda e: validate_spinbox(end_day, end_month, end_year)
+    )
 
 validate_spinbox(end_day, end_month, end_year)
 
