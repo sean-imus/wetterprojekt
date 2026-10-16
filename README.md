@@ -1,5 +1,7 @@
 # Wetterprojekt
 
+Downloads historical daily weather data from the German Weather Service (DWD), loads it into a SQLite database and lets you query and chart it in a small Python GUI.
+
 ## Installation
 
 ```bash
@@ -7,18 +9,18 @@ git clone https://github.com/sean-imus/wetterprojekt.git
 cd wetterprojekt
 ```
 
-## Vorbereitung
+## Requirements
 
-1. **Python 3.10+** erforderlich
-2. Dependencies installieren:
-   ```bash
-   pip install -r requirements.txt
-   ```
-3. Ungefähr 7GB freier Speicherplatz werden benötigt
+1. **Python 3.10+**
+2. Install the dependencies:
+```bash
+pip install -r requirements.txt
+```
+3. About 7 GB of free disk space
 
-## Nutzung
+## Usage
 
-Führ die Skripte der Reihe nach aus:
+Run the scripts in order:
 
 ```bash
 python 1-downloader.py
@@ -29,31 +31,31 @@ python 5-fix_values.py
 python 6-main.py
 ```
 
-## Skripte
+## Scripts
 
-| Skript | Beschreibung |
-|--------|---------------|
-| 1-downloader.py | Lädt Wetterdaten vom DWD runter |
-| 2-extractor.py | Entpackt die ZIP-Dateien |
-| 3-create_db.py | Erstellt die SQLite-Datenbank und die Tabellen |
-| 4-import_to_db.py | Importiert Stationsmetadaten und CSV-Daten in die Datenbank |
-| 5-fix_values.py | Ersetzt -999 durch NULL und erstellt Indizes |
-| 6-main.py | GUI zum Abfragen und Visualisieren der Daten |
+| Script | Description |
+|--------|-------------|
+| 1-downloader.py | Downloads weather data from the DWD |
+| 2-extractor.py | Unpacks the ZIP files |
+| 3-create_db.py | Creates the SQLite database and tables |
+| 4-import_to_db.py | Imports station metadata and CSV data into the database |
+| 5-fix_values.py | Replaces -999 with NULL and creates indexes |
+| 6-main.py | GUI for querying and visualizing the data |
 
-## Funktionen
+## Features
 
-- Stationenauswahl nach Bundesland oder ganz Deutschland
-- Stationen durch Eingabe filtern
-- Mehrere Wettermetriken (Temperatur, Niederschlag, Schneehöhe, Wind, etc.)
-- Benutzerdefinierter Zeitraum (Tag, Monat und Jahr Eingabefelder)
-- Matplotlib-Visualisierung
-- Statistiken: Durchschnitt, Minimum, Maximum
+- Pick stations by federal state or for all of Germany
+- Filter stations by typing
+- Multiple weather metrics (temperature, precipitation, snow depth, wind, etc.)
+- Custom time range (day, month and year input fields)
+- Charts with Matplotlib
+- Statistics: average, minimum, maximum
 
-## Datenbankschema
+## Database schema
 
-- `tbl_stationen` - Stationsmetadaten (ID, Name, Bundesland, Höhe, Koordinaten)
-- `tbl_messwerte` - Wetterdaten mit Fremdschlüssel zu tbl_stationen
+- `tbl_stationen`: station metadata (ID, name, federal state, elevation, coordinates)
+- `tbl_messwerte`: weather measurements, with a foreign key to `tbl_stationen`
 
-## Datenquelle
+## Data source
 
-Wetterdaten vom [Deutschen Wetterdienst (DWD)](https://opendata.dwd.de/climate_environment/CDC/observations_germany/climate/daily/kl/historical/)
+Weather data from the [German Weather Service (Deutscher Wetterdienst, DWD)](https://opendata.dwd.de/climate_environment/CDC/observations_germany/climate/daily/kl/historical/)
